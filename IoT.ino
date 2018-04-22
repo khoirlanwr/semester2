@@ -1,3 +1,5 @@
+#include <Wire.h>
+#include "SSD1306.h"
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 
@@ -6,7 +8,7 @@ const int in = 4;
 const char* host = "192.168.43.115";
 
 WiFiClient clients;
-
+SSD1306 display;
 
 void setup() {
   // put your setup code here, to run once:
@@ -15,15 +17,13 @@ void setup() {
 
   Serial.begin(115200);
   WiFi.begin("nodemcu", "passwordnodemcu"); 
-
+  display.init();
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Waiting for connection");
   }
 
-  
-  
-  
 }
   
 void loop() {
@@ -73,6 +73,26 @@ void loop() {
       return;
     }
   }
+  
+  // convert from int to string
+  String Inches = String(inches);
+  Inches += " inches";
+  
+  String Cm = String(cm);
+  Cm += " cm";
+  
+  
+  // display data in oled
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(1, 12, Inches);
+  display.display();
+  
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(1, 12, Cm);
+  display.display();
+  display.clear();
   
   delay(20000);
 }
